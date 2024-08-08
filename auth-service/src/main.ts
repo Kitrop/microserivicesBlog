@@ -15,10 +15,18 @@ async function bootstrap() {
           groupId: 'auth_service-consumer',
           allowAutoTopicCreation: true
         },
+        send: {
+          acks: -1
+        },
         producer: {
           allowAutoTopicCreation: true,
           idempotent: true,
           maxInFlightRequests: 1,
+          retry: {
+            // multiplier: 2,
+            // initialRetryTime: 100,
+            retries: 1,
+          },
         },
       },
     },

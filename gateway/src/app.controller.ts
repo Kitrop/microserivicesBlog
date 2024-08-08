@@ -5,18 +5,19 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  Logger,
   Post,
   Req,
   Res,
   UseGuards,
-} from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
-import { Request, Response } from 'express';
-import { AppService } from './app.service';
-import { SignInDto, SignUpDto } from './dto/auth.dto';
-import { IsLoginUserGuard } from './login.guard'
-import { v4 as uuidv4 } from 'uuid';
-import { partition } from 'rxjs'
+} from '@nestjs/common'
+import { ClientKafka } from '@nestjs/microservices'
+import { Request, Response } from 'express'
+import { v4 as uuidv4 } from 'uuid'
+import { AppService } from './app.service'
+import { SignInDto, SignUpDto } from './dto/auth.dto'
+import { CheckIsLogoutUserGuard } from './guards/login.guard'
+import { CheckIsLoginUserGuard } from './guards/logout.guard'
 
 @Controller()
 export class AppController {
@@ -26,26 +27,28 @@ export class AppController {
     @Inject('POST_SERVICE') private readonly postClient: ClientKafka,
   ) {}
 
-  async onModuleInit() {
-    this.authClient.subscribeToResponseOf('my-first-topic');
-    this.postClient.subscribeToResponseOf('post_topic');
-    this.authClient.subscribeToResponseOf('signUp');
-    this.authClient.subscribeToResponseOf('signIn');
-    await this.authClient.connect();
-    await this.postClient.connect();
-  }
+  private logger = new Logger(AppController.name)
 
+  async onModuleInit() {
+    this.authClient.subscribeToResponseOf('my-first-topic')
+    this.postClient.subscribeToResponseOf('post_topic')
+    this.authClient.subscribeToResponseOf('signUp')
+    this.authClient.subscribeToResponseOf('signIn')
+    await this.authClient.connect()
+    await this.postClient.connect()
+  }
 
   @Get('post')
   secondTest() {
-    console.log('connect2!');
-    return this.postClient.send('post_topic', 'Hello post');
+    return this.postClient.send('post_topic', 'Hello post')
   }
 
-  @UseGuards(IsLoginUserGuard)
+  @UseGuards(CheckIsLogoutUserGuard)
   @Post('login')
   loginUser(@Body() body: SignInDto, @Res() res: Response) {
-    const result = this.authClient.send('signIn', body)
+    const messageId = uuidv4()
+    const newBody = { ...body, messageId }
+    const result = this.authClient.send('signIn', newBody)
 
     result.subscribe((response) => {
       if (response.accessToken) {
@@ -53,35 +56,38 @@ export class AppController {
       }
     })
 
-    return result;
+    return result
   }
 
+  @UseGuards(CheckIsLogoutUserGuard)
   @Post('createUser')
-  createUser(@Body() body: SignUpDto, @Res() res) {
-    console.log("Received request to create user");
+  createUser(@Body() body: SignUpDto, @Res() res: Response) {
+    this.logger.log('Received request to create user')
     const messageId = uuidv4()
-    const newBody = {...body, messageId }
-    const result = this.authClient.send('signUp', newBody);
-    console.log("Request sent to auth service");
-  
-    result.subscribe((response) => {
-      console.log("Response received from auth service", response);
-      if (response.accessToken) {
-        res.setHeader('Authorization', `Bearer ${response.accessToken}`);
-        res.cookie('accessToken', response.accessToken)
-      }
-      return res.send(response);
-    }, (error) => {
-      console.log("Error received from auth service", error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error);
-    });
-  
-    return result;
+    const newBody = { ...body, messageId }
+    const result = this.authClient.send('signUp', newBody)
+
+    result.subscribe(
+      (response) => {
+        if (response?.accessToken) {
+          res.setHeader('Authorization', `Bearer ${response.accessToken}`)
+          res.cookie('accessToken', response.accessToken, { httpOnly: true })
+        }
+        return res.send(response)
+      },
+      (error) => {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error)
+      },
+    )
+
+    return result
   }
 
+  @UseGuards(CheckIsLoginUserGuard)
   @Get('logout')
   logout(@Req() req: Request, @Res() res: Response) {
     res.removeHeader('Authorization')
+    res.clearCookie('accessToken')
     throw new HttpException('User logout', HttpStatus.OK)
   }
 }

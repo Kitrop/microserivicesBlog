@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PassportModule } from '@nestjs/passport';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { JwtAuthGuard } from './jwt.guard';
-import { JwtStrategy } from './jwt.strategy';
-import { IsLoginUserGuard } from './login.guard'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { JwtModule } from '@nestjs/jwt'
+import { ClientsModule, Transport } from '@nestjs/microservices'
+import { PassportModule } from '@nestjs/passport'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { JwtAuthGuard } from './guards/jwt.guard'
+import { CheckIsLogoutUserGuard } from './guards/login.guard'
+import { JwtStrategy } from './jwt.strategy'
 
 @Module({
   imports: [
@@ -19,15 +19,28 @@ import { IsLoginUserGuard } from './login.guard'
           client: {
             clientId: 'gateway',
             brokers: ['localhost:9092'],
+            retry: {
+              multiplier: 2,
+              initialRetryTime: 100,
+              retries: 5,
+            },
           },
           consumer: {
             groupId: 'gateway-consumer',
             allowAutoTopicCreation: true,
           },
+          send: {
+            acks: -1,
+          },
           producer: {
             allowAutoTopicCreation: true,
             idempotent: true,
-            maxInFlightRequests: 1
+            maxInFlightRequests: 1,
+            retry: {
+              // multiplier: 2,
+              // initialRetryTime: 100,
+              retries: 1,
+            },
           },
         },
       },
@@ -38,13 +51,28 @@ import { IsLoginUserGuard } from './login.guard'
           client: {
             clientId: 'gateway',
             brokers: ['localhost:9092'],
+            retry: {
+              // multiplier: 2,
+              // initialRetryTime: 100,
+              retries: 1,
+            },
           },
           consumer: {
             groupId: 'gateway-consumer',
             allowAutoTopicCreation: true,
           },
+          send: {
+            acks: 1,
+          },
           producer: {
             allowAutoTopicCreation: true,
+            idempotent: true,
+            maxInFlightRequests: 1,
+            retry: {
+              multiplier: 2,
+              initialRetryTime: 100,
+              retries: 5,
+            },
           },
         },
       },
@@ -59,6 +87,6 @@ import { IsLoginUserGuard } from './login.guard'
     ConfigModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [AppService, JwtStrategy, JwtAuthGuard, IsLoginUserGuard],
+  providers: [AppService, JwtStrategy, JwtAuthGuard, CheckIsLogoutUserGuard],
 })
 export class AppModule {}

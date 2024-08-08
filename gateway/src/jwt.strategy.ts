@@ -1,5 +1,5 @@
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PassportStrategy } from '@nestjs/passport'
+import { ExtractJwt, Strategy } from 'passport-jwt'
 
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
@@ -13,9 +13,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   validate(payload) {
     return {
       id: payload.id,
-			username: payload.username,
-			email: payload.email,
-			role: payload.role
+      username: payload.username,
+      email: payload.email,
+      role: payload.role,
     }
   }
 }
