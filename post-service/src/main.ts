@@ -13,7 +13,12 @@ async function bootstrap() {
         groupId: 'post_service-consumer',
         allowAutoTopicCreation: true,
       },
+      send: {
+        acks: -1,
+      },
       producer: {
+        idempotent: true,
+        maxInFlightRequests: 1,
         allowAutoTopicCreation: true,
       },
     },

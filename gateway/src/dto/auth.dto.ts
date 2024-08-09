@@ -9,7 +9,7 @@ import {
 
 export class SignInDto {
   @IsString()
-  login: string
+  username: string
 
   @IsString()
   password: string

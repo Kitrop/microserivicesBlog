@@ -1,12 +1,11 @@
 import { Controller } from '@nestjs/common';
-import { AppService } from './app.service';
 import { MessagePattern } from '@nestjs/microservices';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor() {}
 
-  @MessagePattern('post_topic') // Our topic name
+  @MessagePattern('post_topic')
   handleServiceBEvent(data: any) {
     return { message: 'Response from POST_SERVICE', data };
   }

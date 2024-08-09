@@ -4,9 +4,6 @@ import { JwtModule } from '@nestjs/jwt'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { PassportModule } from '@nestjs/passport'
 import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { JwtAuthGuard } from './guards/jwt.guard'
-import { CheckIsLogoutUserGuard } from './guards/login.guard'
 import { JwtStrategy } from './jwt.strategy'
 import { AuthModule } from './auth/auth.module'
 
@@ -57,6 +54,6 @@ import { AuthModule } from './auth/auth.module'
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtStrategy],
+  providers: [JwtStrategy],
 })
 export class AppModule {}

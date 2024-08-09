@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { compare, genSalt, hash } from 'bcrypt'
 import { LoginDto, UserCreateDto } from 'src/dto/user.dto'
@@ -9,8 +8,7 @@ import { PrismaService } from 'src/prisma.service'
 export class AuthService {
   constructor(
     private prisma: PrismaService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly jwtService: JwtService
   ) {}
 
   async createUser(createDto: UserCreateDto) {
