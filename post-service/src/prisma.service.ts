@@ -147,6 +147,20 @@ export class PrismaService extends PrismaClient implements      OnModuleInit {
     return postDeleted
   }
 
+  async deleteCommentAdmin(commentId: number) {
+    const deletedComment = await this.comments.delete({
+      where: {
+        id: commentId
+      }
+    })
+    .catch((e) => {
+      this.logger.error(e)
+      throw new InternalServerErrorException(`failed to delete comment with id ${commentId}`)
+    })
+
+    return deletedComment
+  } 
+
   async getAllPost() {
     return await this.post.findMany()
     .catch(e => {
@@ -168,4 +182,14 @@ export class PrismaService extends PrismaClient implements      OnModuleInit {
 
     return allComments
   }
+
+  async findPost(id: number): Promise<boolean> {
+		const findPost = this.post.findUnique({
+			where: {
+				id
+			}
+		})
+
+		return findPost ? true : false 
+	}
 }
