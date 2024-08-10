@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt'
 import { DeleteCommentDto } from 'src/dto/commentDto'
 import { CreatePostDto, DeletePostDto, GetPostsDto } from 'src/dto/postDto'
@@ -16,7 +16,7 @@ export class PostService {
 		const newPost = this.prisma.createPost(dataJwt.id, createPostDto.text)
 
 		return {
-			statusCode: 201,
+			statisCode: HttpStatus.CREATED,
 			data: newPost
 		}
 	}
@@ -27,7 +27,7 @@ export class PostService {
 			take: getPostsDto.chunk
 		}) 
 		return {
-			statusCode: 200,
+			statisCode: HttpStatus.OK,
 			data: {
 				posts: data,
 				page: getPostsDto.page,
@@ -37,7 +37,6 @@ export class PostService {
 	}
 	
 	// TODO: Реализовать удаление своих постов и комментариев
-
 	// TODO: Реализовать действия админа
 	async postDeleteAdmin(deletePostDto: DeletePostDto) {
 		const dataJwt = this.jwtService.decode(deletePostDto.accessToken)
@@ -46,7 +45,7 @@ export class PostService {
 			const deletedPost = await this.prisma.deletePostAdmin(deletePostDto.postId)
 
 			return {
-				statisCode: 200,
+				statisCode: HttpStatus.OK,
 				data: {
 					postId: deletedPost.id,
 					message: deletedPost.message
@@ -63,7 +62,7 @@ export class PostService {
 			const deletedComment = await this.prisma.deletePostAdmin(deleteCommentDto.commentId)
 
 			return {
-				statisCode: 200,
+				statisCode: HttpStatus.OK,
 				data: {
 					postId: deletedComment.id,
 					text: deletedComment.message
