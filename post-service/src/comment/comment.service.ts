@@ -1,40 +1,44 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { CreateCommentDto, GetAllCommentsDto } from 'src/dto/commentDto'
-import { PrismaService } from 'src/prisma.service'
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { CreateCommentDto, GetAllCommentsDto } from 'src/dto/comment.dto';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class CommentService {
-	constructor(
-		private readonly jwtService: JwtService,
-		private prisma: PrismaService,
-	) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private prisma: PrismaService,
+  ) {}
 
-	async createComment(createCommentDto: CreateCommentDto) {
-		const dataJwt = this.jwtService.decode(createCommentDto.accessToken)
+  async createComment(createCommentDto: CreateCommentDto) {
+    const dataJwt = this.jwtService.decode(createCommentDto.accessToken);
 
-		if(!this.prisma.findPost(createCommentDto.postId)) {
-			throw new NotFoundException('Post not found')
-		}
+    if (!this.prisma.findPost(createCommentDto.postId)) {
+      throw new NotFoundException('Post not found');
+    }
 
-		const newComment = await this.prisma.createComment(dataJwt.id, createCommentDto.postId, createCommentDto.text)
+    const newComment = await this.prisma.createComment(
+      dataJwt.id,
+      createCommentDto.postId,
+      createCommentDto.text,
+    );
 
-		return {
-			statusCode: HttpStatus.CREATED,
-			data: {
-				commentId: newComment.commentId,
-				text: newComment.text,
-				likes: newComment.likeCount,
-				comments: newComment.commentsCount,
-			}
-		}
-	}
+    return {
+      statusCode: HttpStatus.CREATED,
+      data: {
+        commentId: newComment.commentId,
+        text: newComment.text,
+        likes: newComment.likeCount,
+        comments: newComment.commentsCount,
+      },
+    };
+  }
 
-	async getAllComments(getAllComments: GetAllCommentsDto) {
-		const data = await this.prisma.getAllComments(getAllComments.postId)
-		return {
-			statusCode: HttpStatus.OK,
-			data
-		}
-	}
+  async getAllComments(getAllComments: GetAllCommentsDto) {
+    const data = await this.prisma.getAllComments(getAllComments.postId);
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
+  }
 }
