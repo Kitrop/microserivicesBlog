@@ -29,7 +29,7 @@ export class LikeService {
 					postId: likePostDto.postId,
 					like: false,
 					likes: staticst.likeCount,
-					comments: staticst.likeCount,
+					comments: staticst.commentCount,
 				}
 			}
 		}
@@ -39,10 +39,10 @@ export class LikeService {
 		return {
 			statusCode: 201,
 			data: {
-				postId: newLike.id,
+				postId: newLike.postId,
 				like: true,
-				likes: newLike.post.Likes.length,
-				comments: newLike.post.Comments.length,
+				likes: newLike.likeCount,
+				comments: newLike.commentsCount
 			}
 		}
 	}

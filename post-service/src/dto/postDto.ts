@@ -19,3 +19,13 @@ export class DeletePostDto{
 	@IsPositive()
 	postId: number
 }
+
+export class GetPostsDto {
+	@IsNumber()
+	@IsPositive()
+	page: number
+
+	@IsNumber()
+	@IsPositive()
+	chunk: number
+}

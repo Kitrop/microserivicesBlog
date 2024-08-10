@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { CreateCommentDto, GetAllCommentsDto } from 'src/dto/commentDto'
 import { PrismaService } from 'src/prisma.service'
@@ -20,12 +20,12 @@ export class CommentService {
 		const newComment = await this.prisma.createComment(dataJwt.id, createCommentDto.postId, createCommentDto.text)
 
 		return {
-			statusCode: 201,
+			statusCode: HttpStatus.CREATED,
 			data: {
-				commentId: newComment.id,
+				commentId: newComment.commentId,
 				text: newComment.text,
-				likes: newComment.post.Likes.length,
-				comments: newComment.post.Comments,
+				likes: newComment.likeCount,
+				comments: newComment.commentsCount,
 			}
 		}
 	}
@@ -33,7 +33,7 @@ export class CommentService {
 	async getAllComments(getAllComments: GetAllCommentsDto) {
 		const data = await this.prisma.getAllComments(getAllComments.postId)
 		return {
-			statusCode: 200,
+			statusCode: HttpStatus.OK,
 			data
 		}
 	}

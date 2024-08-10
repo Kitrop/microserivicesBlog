@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt'
 import { DeleteCommentDto } from 'src/dto/commentDto'
-import { CreatePostDto, DeletePostDto } from 'src/dto/postDto'
+import { CreatePostDto, DeletePostDto, GetPostsDto } from 'src/dto/postDto'
 import { PrismaService } from 'src/prisma.service'
 
 @Injectable()
@@ -21,11 +21,18 @@ export class PostService {
 		}
 	}
 
-	async getAllPost() {
-		const data = await this.prisma.getAllPost()
+	async getPosts(getPostsDto: GetPostsDto) {
+		const data = await this.prisma.post.findMany({
+			skip: (getPostsDto.page - 1) * getPostsDto.chunk,
+			take: getPostsDto.chunk
+		}) 
 		return {
 			statusCode: 200,
-			data 
+			data: {
+				posts: data,
+				page: getPostsDto.page,
+				chunk: getPostsDto.chunk
+			} 
 		}
 	}
 	

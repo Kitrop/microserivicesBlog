@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices'
 import { PostService } from './post.service'
-import { CreatePostDto } from 'src/dto/postDto'
+import { CreatePostDto, GetPostsDto } from 'src/dto/postDto'
 
 @Controller('post')
 export class PostController {
@@ -13,7 +13,7 @@ export class PostController {
 	}
 
 	@MessagePattern('getAllPost')
-	async getAllPost() {
-		return this.postService.getAllPost()
+	async getPosts(@Payload() getPostsDto: GetPostsDto) {
+		return this.postService.getPosts(getPostsDto)
 	}
 }

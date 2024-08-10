@@ -30,21 +30,30 @@ export class PrismaService extends PrismaClient implements      OnModuleInit {
 				postId,
 				text
 			},
-			include: {
-				post: {
-					include: {
-						Likes: true,
-						Comments: true
-					}
-				}
-			}
     })
     .catch((e) => {
 			this.logger.error(e)
 			throw new InternalServerErrorException(`failed to create a comment to post with id ${postId}`)
 		})
 
-    return createdComment
+    const likeCount = await this.likes.count({
+      where: {
+        postId
+      }
+    })
+
+    const commentsCount = await this.likes.count({
+      where: {
+        postId
+      }
+    })
+
+    return {
+      commentId: createdComment.id,
+      text: createdComment.text,
+      commentsCount,
+      likeCount
+    }
   }
 
   async createLike(userId: number, postId: number) {
@@ -53,21 +62,29 @@ export class PrismaService extends PrismaClient implements      OnModuleInit {
         userId,
         postId
       },
-      include: {
-        post: {
-          include: {
-						Likes: true,
-						Comments: true
-					}
-        }
-      }
     })
     .catch((e) => {
 			this.logger.error(e)
 			throw new InternalServerErrorException(`failed to like post with id ${postId}`)
 		})
 
-    return like
+    const likeCount = await this.likes.count({
+      where: {
+        postId
+      }
+    })
+
+    const commentsCount = await this.likes.count({
+      where: {
+        postId
+      }
+    })
+
+    return {
+      postId,
+      likeCount,
+      commentsCount
+    }
   }
 
   async findPostWithLike(userId: number, postId: number) {
@@ -106,21 +123,26 @@ export class PrismaService extends PrismaClient implements      OnModuleInit {
   }
 
   async statisticPost(postId) {
-    const statisticPost = await this.post.findUnique({
+    const likes = await this.likes.count({
       where: {
-        id: postId
-      },
-      include: {
-        Likes: true,
-        Comments: true
+        postId
       }
     })
+    const comments = await this.comments.count({
+      where: {
+        postId
+      }
+    })
+
     .catch((e) => {
       this.logger.error(e)
       throw new InternalServerErrorException(`failed to dislike post with id ${postId}`)
     })
 
-    return statisticPost
+    return {
+      comments,
+      likes
+    }
   }
 
   async deleteAndStatisticPost(likeId: number, postId: number) {
@@ -128,8 +150,8 @@ export class PrismaService extends PrismaClient implements      OnModuleInit {
     const statistic = await this.statisticPost(postId)
 
     return {
-      likeCount: statistic.Likes.length,
-      commentCount: statistic.Comments.length
+      likeCount: statistic.likes,
+      commentCount: statistic.comments
     }
   }
 
