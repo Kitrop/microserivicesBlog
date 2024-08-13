@@ -1,31 +1,38 @@
-import { IsJWT, IsNumber, IsPositive, IsString, Max, Min } from 'class-validator'
+import {
+  IsJWT,
+  IsNumber,
+  IsPositive,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator'
 
 export class CreatePostDto {
-	@IsString()
-	accessToken: string
+  @IsString()
+    accessToken: string
 
-	@IsString()
-	@Min(4)
-	@Max(350)
-	text: string
+  @IsString()
+  @Min(4)
+  @Max(350)
+    text: string
 }
 
-export class DeletePostDto{
-	@IsString()
-	@IsJWT()
-	accessToken: string
+export class DeletePostDto {
+  @IsString()
+  @IsJWT()
+    accessToken: string
 
-	@IsNumber()
-	@IsPositive()
-	postId: number
+  @IsNumber()
+  @IsPositive()
+    postId: number
 }
 
 export class GetPostsDto {
-	@IsNumber()
-	@IsPositive()
-	page: number
+  @IsNumber()
+  @IsPositive()
+    page: number
 
-	@IsNumber()
-	@IsPositive()
-	chunk: number
+  @IsNumber()
+  @IsPositive()
+    chunk: number
 }

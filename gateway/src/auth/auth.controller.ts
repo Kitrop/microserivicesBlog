@@ -37,8 +37,10 @@ export class AuthController {
     const result = this.authClient.send('signIn', newBody)
 
     result.subscribe((response) => {
-      if (response.accessToken) {
-        res.setHeader('Authorization', `Bearer ${response.accessToken}`)
+      if (response?.data?.accessToken) {
+        res.cookie('accessToken', response.data.accessToken, {
+          httpOnly: true,
+        })
       }
     })
 
@@ -54,11 +56,12 @@ export class AuthController {
 
     result.subscribe(
       (response) => {
-        if (response?.accessToken) {
-          res.setHeader('Authorization', `Bearer ${response.accessToken}`)
-          res.cookie('accessToken', response.accessToken, { httpOnly: true })
+        if (response?.data?.accessToken) {
+          res.cookie('accessToken', response.data.accessToken, {
+            httpOnly: true,
+          })
         }
-        return res.send(response)
+        return res.send(response).status(response.status)
       },
       (error) => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error)
@@ -71,7 +74,6 @@ export class AuthController {
   @UseGuards(CheckIsLoginUserGuard)
   @Get('logout')
   logout(@Req() req: Request, @Res() res: Response) {
-    res.removeHeader('Authorization')
     res.clearCookie('accessToken')
     throw new HttpException('User logout', HttpStatus.OK)
   }

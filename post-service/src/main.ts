@@ -1,6 +1,7 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { Transport } from '@nestjs/microservices';
+import { NestFactory } from '@nestjs/core'
+import { AppModule } from './app.module'
+import { Transport } from '@nestjs/microservices'
+import { KafkaExceptionFilter } from './kafkaExaption.filter'
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
@@ -17,12 +18,14 @@ async function bootstrap() {
         acks: -1,
       },
       producer: {
+        allowAutoTopicCreation: true,
         idempotent: true,
         maxInFlightRequests: 1,
-        allowAutoTopicCreation: true,
       },
     },
-  });
-  await app.listen();
+  })
+
+  app.useGlobalFilters(new KafkaExceptionFilter())
+  await app.listen()
 }
-bootstrap();
+bootstrap()

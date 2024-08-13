@@ -1,7 +1,7 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { LikePostDto } from 'src/dto/like.dto';
-import { PrismaService } from 'src/prisma.service';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { LikePostDto } from 'src/dto/like.dto'
+import { PrismaService } from 'src/prisma.service'
 
 @Injectable()
 export class LikeService {
@@ -11,22 +11,22 @@ export class LikeService {
   ) {}
 
   async likePost(likePostDto: LikePostDto) {
-    const dataJwt = this.jwtService.decode(likePostDto.accessToken);
+    const dataJwt = this.jwtService.decode(likePostDto.accessToken)
 
     if (!this.prisma.findPost(likePostDto.postId)) {
-      throw new NotFoundException('Post not found');
+      throw new NotFoundException('Post not found')
     }
 
     const findPostWithLike = await this.prisma.findPostWithLike(
       dataJwt.id,
       likePostDto.postId,
-    );
+    )
 
     if (findPostWithLike) {
       const staticst = await this.prisma.deleteAndStatisticPost(
         findPostWithLike.Likes[0].id,
         likePostDto.postId,
-      );
+      )
 
       return {
         statusCode: HttpStatus.OK,
@@ -36,13 +36,10 @@ export class LikeService {
           likes: staticst.likeCount,
           comments: staticst.commentCount,
         },
-      };
+      }
     }
 
-    const newLike = await this.prisma.createLike(
-      dataJwt.id,
-      likePostDto.postId,
-    );
+    const newLike = await this.prisma.createLike(dataJwt.id, likePostDto.postId)
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -52,6 +49,6 @@ export class LikeService {
         likes: newLike.likeCount,
         comments: newLike.commentsCount,
       },
-    };
+    }
   }
 }
