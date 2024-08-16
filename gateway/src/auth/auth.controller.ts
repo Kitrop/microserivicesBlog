@@ -1,8 +1,9 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Inject, Post, Req, Res, UseGuards } from '@nestjs/common'
 import { ClientKafka } from '@nestjs/microservices'
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
-import { ReturnedAuthDto, SignInDto, SignUpDto } from 'src/dto/auth.dto'
+import { SingInResponse, SingUpResponse } from 'src/decorators/auth.decorator'
+import { SignInDto, SignUpDto } from 'src/dto/auth.dto'
 import { CheckIsLogoutUserGuard } from 'src/guards/login.guard'
 import { CheckIsLoginUserGuard } from 'src/guards/logout.guard'
 import { v4 as uuidv4 } from 'uuid'
@@ -20,10 +21,7 @@ export class AuthController {
 
   @UseGuards(CheckIsLogoutUserGuard)
   @Post('login')
-  @ApiBody({ type: SignInDto })
-  @ApiResponse({ status: HttpStatus.OK, description: 'user success login', type: ReturnedAuthDto })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'input password incorrect' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'user with this username not found' })
+  @SingInResponse()
   loginUser(@Body() body: SignInDto, @Res() res: Response) {
     const messageId = uuidv4()
     const newBody = {
@@ -45,10 +43,7 @@ export class AuthController {
 
   @UseGuards(CheckIsLogoutUserGuard)
   @Post('createUser')
-  @ApiBody({ type: SignUpDto })
-  @ApiResponse({ status: HttpStatus.OK, description: 'user success create', type: ReturnedAuthDto })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'user with this username already exist' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'user with this email already exist' })
+  @SingUpResponse()
   createUser(@Body() body: SignUpDto, @Res() res: Response) {
     const messageId = uuidv4()
     const newBody = {
