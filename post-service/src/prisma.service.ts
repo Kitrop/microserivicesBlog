@@ -1,11 +1,4 @@
-import {
-  HttpException,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-  OnModuleInit,
-} from '@nestjs/common'
+import { HttpException, Injectable, InternalServerErrorException, Logger, NotFoundException, OnModuleInit } from '@nestjs/common'
 import { PrismaClient } from '@prisma/client'
 
 @Injectable()
@@ -27,16 +20,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         this.logger.error(e)
         throw new InternalServerErrorException('failed to create a post')
       })
-    console.log(createdPost)
     return createdPost
   }
 
-  async createComment(
-    userId: number,
-    username: string,
-    postId: number,
-    text: string,
-  ) {
+  async createComment(userId: number, username: string, postId: number, text: string) {
     const createdComment = await this.comments
       .create({
         data: {
@@ -48,9 +35,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to create a comment to post with id ${postId}`,
-        )
+        throw new InternalServerErrorException(`failed to create a comment to post with id ${postId}`)
       })
 
     const likeCount = await this.likes.count({
@@ -83,9 +68,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to like post with id ${postId}`,
-        )
+        throw new InternalServerErrorException(`failed to like post with id ${postId}`)
       })
 
     const likeCount = await this.likes.count({
@@ -123,9 +106,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to dislike post with id ${postId}`,
-        )
+        throw new InternalServerErrorException(`failed to dislike post with id ${postId}`)
       })
 
     return findPostWithLike
@@ -161,9 +142,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to dislike post with id ${postId}`,
-        )
+        throw new InternalServerErrorException(`failed to dislike post with id ${postId}`)
       })
 
     return {
@@ -191,9 +170,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to delete comment with id ${commentId}`,
-        )
+        throw new InternalServerErrorException(`failed to delete comment with id ${commentId}`)
       })
 
     return deletedComment
@@ -207,6 +184,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async getAllComments(postId: number) {
+    if (!this.findPost(postId)) {
+      throw new NotFoundException('post not found')
+    }
+
     const allComments = await this.comments
       .findMany({
         where: {
@@ -215,9 +196,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to get all comments from post with id ${postId}`,
-        )
+        throw new InternalServerErrorException(`failed to get all comments from post with id ${postId}`)
       })
 
     return allComments
@@ -262,9 +241,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to delete post with id ${postId}`,
-        )
+        throw new InternalServerErrorException(`failed to delete post with id ${postId}`)
       })
 
     this.comments
@@ -275,9 +252,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to delete all comments from post with id ${postId}`,
-        )
+        throw new InternalServerErrorException(`failed to delete all comments from post with id ${postId}`)
       })
   }
 
@@ -320,9 +295,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
       .catch((e) => {
         this.logger.error(e)
-        throw new InternalServerErrorException(
-          `failed to delete comment with id ${commentId}`,
-        )
+        throw new InternalServerErrorException(`failed to delete comment with id ${commentId}`)
       })
   }
 }

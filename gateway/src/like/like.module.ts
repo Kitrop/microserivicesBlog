@@ -8,7 +8,15 @@ import { ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 
 @Module({
-  imports: [ClientsModule.register([{ name: 'POST_COMMENT_SERVICE', ...kafkaConfig }]), JwtModule.register(jwtModuleConfig(process.env.SECRET_KEY))],
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'POST_COMMENT_SERVICE',
+        ...kafkaConfig,
+      },
+    ]),
+    JwtModule.register(jwtModuleConfig(process.env.SECRET_KEY)),
+  ],
   controllers: [LikeController],
   providers: [CheckIsLogoutUserGuard, CheckIsLoginUserGuard, ConfigService],
 })

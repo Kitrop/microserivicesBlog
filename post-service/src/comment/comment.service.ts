@@ -1,15 +1,6 @@
-import {
-  BadRequestException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import {
-  CreateCommentDto,
-  DeleteCommentDto,
-  GetAllCommentsDto,
-} from 'src/dto/comment.dto'
+import { CreateCommentDto, DeleteCommentDto, GetAllCommentsDto } from 'src/dto/comment.dto'
 import { PrismaService } from 'src/prisma.service'
 
 @Injectable()
@@ -26,12 +17,7 @@ export class CommentService {
       throw new NotFoundException('Post not found')
     }
 
-    const newComment = await this.prisma.createComment(
-      dataJwt.id,
-      dataJwt.username,
-      createCommentDto.postId,
-      createCommentDto.text,
-    )
+    const newComment = await this.prisma.createComment(dataJwt.id, dataJwt.username, createCommentDto.postId, createCommentDto.text)
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -54,9 +40,7 @@ export class CommentService {
 
   async deleteMyComment(deleteComment: DeleteCommentDto) {
     const dataJwt = this.jwtService.decode(deleteComment.accessToken)
-    const userId = await this.prisma.findAuthorIdComment(
-      deleteComment.commentId,
-    )
+    const userId = await this.prisma.findAuthorIdComment(deleteComment.commentId)
 
     if (dataJwt.id === userId) {
       this.prisma.deleteComment(deleteComment.commentId)

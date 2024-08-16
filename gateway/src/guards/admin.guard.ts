@@ -1,11 +1,11 @@
-import { Injectable, CanActivate, ExecutionContext, BadRequestException } from '@nestjs/common'
+import { Injectable, CanActivate, ExecutionContext, BadRequestException, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Observable } from 'rxjs'
 
 @Injectable()
-export class CheckIsLoginUserGuard implements CanActivate {
-  // Проверка на то что пользователь залогинен
+export class AdminGuard implements CanActivate {
+  // Проверка на то что пользователь админ
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -15,7 +15,7 @@ export class CheckIsLoginUserGuard implements CanActivate {
     const accessToken = request.cookies['accessToken']
 
     if (!accessToken) {
-      throw new BadRequestException('User is not logged in')
+      throw new UnauthorizedException('User is not logged in')
     }
 
     const isValidToken = this.jwtService
@@ -28,6 +28,16 @@ export class CheckIsLoginUserGuard implements CanActivate {
         throw new BadRequestException('Invalid token')
       })
 
-    return isValidToken ? true : false
+    if (!isValidToken) {
+      throw new BadRequestException('Invalid token')
+    }
+
+    const dataJwt = this.jwtService.decode(accessToken)
+
+    if (dataJwt.role === 'ADMIN') {
+      return true
+    } else {
+      throw new BadRequestException('User is not admin')
+    }
   }
 }

@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { DeleteCommentDto } from 'src/dto/comment.dto'
 import { CreatePostDto, DeletePostDto, GetPostsDto } from 'src/dto/post.dto'
@@ -46,15 +40,12 @@ export class PostService {
     const dataJwt = this.jwtService.decode(deletePostDto.accessToken)
 
     if (dataJwt.role === 'ADMIN') {
-      const deletedPost = await this.prisma.deletePostAdmin(
-        deletePostDto.postId,
-      )
+      await this.prisma.deletePost(deletePostDto.postId)
 
       return {
         statisCode: HttpStatus.OK,
         data: {
-          postId: deletedPost.id,
-          message: deletedPost.message,
+          postId: deletePostDto.postId,
         },
       }
     }
@@ -65,15 +56,12 @@ export class PostService {
     const dataJwt = this.jwtService.decode(deleteCommentDto.accessToken)
 
     if (dataJwt.role === 'ADMIN') {
-      const deletedComment = await this.prisma.deletePostAdmin(
-        deleteCommentDto.commentId,
-      )
+      await this.prisma.deleteComment(deleteCommentDto.commentId)
 
       return {
         statisCode: HttpStatus.OK,
         data: {
-          postId: deletedComment.id,
-          text: deletedComment.message,
+          postId: deleteCommentDto.commentId,
         },
       }
     }

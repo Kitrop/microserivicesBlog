@@ -1,12 +1,5 @@
 /* eslint-disable indent */
-import {
-  IsJWT,
-  IsNumber,
-  IsPositive,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator'
+import { IsJWT, IsNumber, IsPositive, IsString, Max, Min } from 'class-validator'
 
 export class GetAllCommentsDto {
   @IsNumber()

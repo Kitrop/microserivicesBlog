@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { compare, genSalt, hash } from 'bcrypt'
 import { LoginDto, UserCreateDto } from 'src/dto/user.dto'
@@ -25,16 +31,10 @@ export class AuthService {
     })
 
     if (findUserByUsername) {
-      return new HttpException(
-        'User with this username already exist',
-        HttpStatus.BAD_REQUEST
-      )
+      return new BadRequestException('user with this username already exist')
     }
     if (findUserByEmail) {
-      return new HttpException(
-        'User with this email already exist',
-        HttpStatus.BAD_REQUEST
-      )
+      return new BadRequestException('user with this email already exist')
     }
 
     const salt = await genSalt()
@@ -75,7 +75,7 @@ export class AuthService {
     })
 
     if (!findUser) {
-      return new HttpException('User not found', HttpStatus.NOT_FOUND)
+      return new NotFoundException('User not found')
     }
 
     const comparePassword = compare(loginDto.password, findUser.passwordHash)
@@ -89,7 +89,7 @@ export class AuthService {
 
     if (comparePassword) {
       return {
-        statusCode: 200,
+        statusCode: HttpStatus.OK,
         data: {
           id: findUser.id,
           username: findUser.username,
@@ -98,7 +98,7 @@ export class AuthService {
         }
       }
     } else {
-      return new HttpException('incorrect password', HttpStatus.BAD_REQUEST)
+      return new BadRequestException('incorrect password')
     }
   }
 }

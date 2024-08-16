@@ -1,10 +1,6 @@
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
-import {
-  CreateCommentDto,
-  DeleteCommentDto,
-  GetAllCommentsDto,
-} from 'src/dto/comment.dto'
+import { CreateCommentDto, DeleteCommentDto, GetAllCommentsDto } from 'src/dto/comment.dto'
 import { CommentService } from './comment.service'
 
 @Controller()

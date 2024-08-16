@@ -1,27 +1,16 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Inject, Post, Req, Res, UseGuards } from '@nestjs/common'
 import { ClientKafka } from '@nestjs/microservices'
-import { SignInDto, SignUpDto } from 'src/dto/auth.dto'
-import { CheckIsLogoutUserGuard } from 'src/guards/login.guard'
-import { v4 as uuidv4 } from 'uuid'
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
+import { ReturnedAuthDto, SignInDto, SignUpDto } from 'src/dto/auth.dto'
+import { CheckIsLogoutUserGuard } from 'src/guards/login.guard'
 import { CheckIsLoginUserGuard } from 'src/guards/logout.guard'
+import { v4 as uuidv4 } from 'uuid'
 
+@ApiTags('AUTH')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    @Inject('AUTH_SERVICE') private readonly authClient: ClientKafka,
-  ) {}
+  constructor(@Inject('AUTH_SERVICE') private readonly authClient: ClientKafka) {}
 
   async onModuleInit() {
     this.authClient.subscribeToResponseOf('signUp')
@@ -31,9 +20,16 @@ export class AuthController {
 
   @UseGuards(CheckIsLogoutUserGuard)
   @Post('login')
+  @ApiBody({ type: SignInDto })
+  @ApiResponse({ status: HttpStatus.OK, description: 'user success login', type: ReturnedAuthDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'input password incorrect' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'user with this username not found' })
   loginUser(@Body() body: SignInDto, @Res() res: Response) {
     const messageId = uuidv4()
-    const newBody = { ...body, messageId }
+    const newBody = {
+      ...body,
+      messageId,
+    }
     const result = this.authClient.send('signIn', newBody)
 
     result.subscribe((response) => {
@@ -49,9 +45,16 @@ export class AuthController {
 
   @UseGuards(CheckIsLogoutUserGuard)
   @Post('createUser')
+  @ApiBody({ type: SignUpDto })
+  @ApiResponse({ status: HttpStatus.OK, description: 'user success create', type: ReturnedAuthDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'user with this username already exist' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'user with this email already exist' })
   createUser(@Body() body: SignUpDto, @Res() res: Response) {
     const messageId = uuidv4()
-    const newBody = { ...body, messageId }
+    const newBody = {
+      ...body,
+      messageId,
+    }
     const result = this.authClient.send('signUp', newBody)
 
     result.subscribe(
@@ -73,6 +76,8 @@ export class AuthController {
 
   @UseGuards(CheckIsLoginUserGuard)
   @Get('logout')
+  @ApiResponse({ status: HttpStatus.OK, description: 'user logout' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'user is not login' })
   logout(@Req() req: Request, @Res() res: Response) {
     res.clearCookie('accessToken')
     throw new HttpException('User logout', HttpStatus.OK)

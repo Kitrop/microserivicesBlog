@@ -5,13 +5,15 @@ import { PassportModule } from '@nestjs/passport'
 import { AppController } from './app.controller'
 import { JwtStrategy } from './jwt.strategy'
 import { AuthModule } from './auth/auth.module'
-import { PostModule } from './post/post.module'
-import { CommentModule } from './comment/comment.module';
-import { LikeModule } from './like/like.module';
+import { CommentModule } from './comment/comment.module'
+import { LikeModule } from './like/like.module'
+import { PostModule } from './guards/post.module'
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+    }),
     JwtModule.register({
       secret: process.env.SECRET_KEY,
       signOptions: {

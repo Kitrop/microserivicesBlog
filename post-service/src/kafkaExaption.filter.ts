@@ -1,9 +1,4 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-} from '@nestjs/common'
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common'
 import { RpcException } from '@nestjs/microservices'
 import { log } from 'console'
 
@@ -17,10 +12,7 @@ export class KafkaExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus()
     const exceptionResponse: any = exception.getResponse()
 
-    const message =
-      typeof exceptionResponse === 'string'
-        ? exceptionResponse
-        : exceptionResponse.message
+    const message = typeof exceptionResponse === 'string' ? exceptionResponse : exceptionResponse.message
     log(message)
     const errorResponse = {
       statusCode: status,

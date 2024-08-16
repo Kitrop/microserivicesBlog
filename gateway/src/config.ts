@@ -33,7 +33,6 @@ export const kafkaConfig: KafkaOptions = {
   },
 }
 
-
 export const jwtModuleConfig = (secret: string) => {
   return {
     secret,

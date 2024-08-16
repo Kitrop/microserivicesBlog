@@ -1,29 +1,30 @@
 /* eslint-disable indent */
-import { IsJWT, IsNumber, IsPositive, IsString, MaxLength, MinLength } from 'class-validator'
+import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger'
+import { IsNumber, IsPositive, IsString, MaxLength, MinLength } from 'class-validator'
 
 export class CreatePostDto {
   @IsString()
   @MinLength(2)
   @MaxLength(350)
+  @ApiProperty()
   text: string
 }
 
 export class DeletePostDto {
-  @IsString()
-  @IsJWT()
-  accessToken: string
-
   @IsNumber()
   @IsPositive()
+  @ApiProperty()
   postId: number
 }
 
 export class GetPostsDto {
   @IsNumber()
   @IsPositive()
+  @ApiProperty()
   page: number
 
   @IsNumber()
   @IsPositive()
+  @ApiProperty()
   chunk: number
 }

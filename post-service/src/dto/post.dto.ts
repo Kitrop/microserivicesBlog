@@ -1,11 +1,4 @@
-import {
-  IsJWT,
-  IsNumber,
-  IsPositive,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator'
+import { IsJWT, IsNumber, IsPositive, IsString, Max, Min } from 'class-validator'
 
 export class CreatePostDto {
   @IsString()

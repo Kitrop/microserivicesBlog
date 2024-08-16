@@ -17,16 +17,10 @@ export class LikeService {
       throw new NotFoundException('Post not found')
     }
 
-    const findPostWithLike = await this.prisma.findPostWithLike(
-      dataJwt.id,
-      likePostDto.postId,
-    )
+    const findPostWithLike = await this.prisma.findPostWithLike(dataJwt.id, likePostDto.postId)
 
     if (findPostWithLike) {
-      const staticst = await this.prisma.deleteAndStatisticPost(
-        findPostWithLike.Likes[0].id,
-        likePostDto.postId,
-      )
+      const staticst = await this.prisma.deleteAndStatisticPost(findPostWithLike.Likes[0].id, likePostDto.postId)
 
       return {
         statusCode: HttpStatus.OK,
@@ -42,7 +36,7 @@ export class LikeService {
     const newLike = await this.prisma.createLike(dataJwt.id, likePostDto.postId)
 
     return {
-      statusCode: HttpStatus.CREATED,
+      statusCode: HttpStatus.OK,
       data: {
         postId: newLike.postId,
         like: true,
