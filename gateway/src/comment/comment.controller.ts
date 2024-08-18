@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post, Req, 
 import { ClientKafka } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
-import { AdminDeleteCommentResponse, CreatePostResponse, DeleteCommentResponse, GetAllPostResponse } from 'src/decorators/comment.decorator'
+import { AdminDeleteCommentResponseApi, CreatePostResponseApi, DeleteCommentResponseApi, GetAllPostResponseApi } from 'src/decorators/comment.decorator'
 import { CreateCommentDto, DeleteCommentDto } from 'src/dto/comment.dto'
 import { AdminGuard } from 'src/guards/admin.guard'
 import { CheckIsLoginUserGuard } from 'src/guards/logout.guard'
@@ -27,7 +27,7 @@ export class CommentController {
 
   @UseGuards(CheckIsLoginUserGuard)
   @Post('createComment')
-  @CreatePostResponse()
+  @CreatePostResponseApi()
   createComment(@Body() body: CreateCommentDto, @Res() res: Response, @Req() req: Request) {
     const accessToken = req.cookies['accessToken']
     this.postCommentClient.send('createComment', { ...body, accessToken }).subscribe((result) => {
@@ -36,7 +36,7 @@ export class CommentController {
   }
 
   @Get('getAllComments/:id')
-  @GetAllPostResponse()
+  @GetAllPostResponseApi()
   getAllComments(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     this.postCommentClient.send('getAllComments', { postId: id }).subscribe((result) => {
       res.send(result).status(result.statusCode)
@@ -45,7 +45,7 @@ export class CommentController {
 
   @UseGuards(CheckIsLoginUserGuard)
   @Delete('deleteComment')
-  @DeleteCommentResponse()
+  @DeleteCommentResponseApi()
   deleteMyComment(@Body() body: DeleteCommentDto, @Res() res: Response, @Req() req: Request) {
     const accessToken = req.cookies['accessToken']
     this.postCommentClient.send('deleteMyComment', { accessToken, ...body }).subscribe((result) => {
@@ -55,7 +55,7 @@ export class CommentController {
 
   @UseGuards(AdminGuard)
   @Delete('deleteCommentAdmin')
-  @AdminDeleteCommentResponse()
+  @AdminDeleteCommentResponseApi()
   deleteCommentAdmin(@Body() body: DeleteCommentDto, @Res() res: Response, @Req() req: Request) {
     const accessToken = req.cookies['accessToken']
     this.postCommentClient.send('deleteCommentAdmin', { accessToken, ...body }).subscribe((result) => {

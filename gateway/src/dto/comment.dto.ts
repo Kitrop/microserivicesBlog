@@ -1,15 +1,16 @@
 /* eslint-disable indent */
-import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger'
-import { IsJWT, IsNumber, IsPositive, IsString, Max, Min } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsNumber, IsPositive, IsString, MaxLength, MinLength } from 'class-validator'
 
 export class CreateCommentDto {
   @IsNumber()
+  @IsPositive()
   @ApiProperty()
   postId: number
 
   @IsString()
-  @Min(1)
-  @Max(100)
+  @MinLength(1)
+  @MaxLength(100)
   @ApiProperty()
   text: string
 }

@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpException, HttpStatus, Inject, Post, Req, Re
 import { ClientKafka } from '@nestjs/microservices'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
-import { SingInResponse, SingUpResponse } from 'src/decorators/auth.decorator'
+import { SingInResponseApi, SingUpResponseApi } from 'src/decorators/auth.decorator'
 import { SignInDto, SignUpDto } from 'src/dto/auth.dto'
 import { CheckIsLogoutUserGuard } from 'src/guards/login.guard'
 import { CheckIsLoginUserGuard } from 'src/guards/logout.guard'
@@ -21,7 +21,7 @@ export class AuthController {
 
   @UseGuards(CheckIsLogoutUserGuard)
   @Post('login')
-  @SingInResponse()
+  @SingInResponseApi()
   loginUser(@Body() body: SignInDto, @Res() res: Response) {
     const messageId = uuidv4()
     const newBody = {
@@ -43,7 +43,7 @@ export class AuthController {
 
   @UseGuards(CheckIsLogoutUserGuard)
   @Post('createUser')
-  @SingUpResponse()
+  @SingUpResponseApi()
   createUser(@Body() body: SignUpDto, @Res() res: Response) {
     const messageId = uuidv4()
     const newBody = {

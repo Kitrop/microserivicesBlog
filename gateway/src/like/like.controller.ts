@@ -4,7 +4,7 @@ import { CheckIsLoginUserGuard } from 'src/guards/logout.guard'
 import { Response, Request } from 'express'
 import { ClientKafka } from '@nestjs/microservices'
 import { ApiTags } from '@nestjs/swagger'
-import { LikeResponse } from 'src/decorators/like.decorator'
+import { LikeResponseLike } from 'src/decorators/like.decorator'
 
 @ApiTags('LIKE')
 @Controller('like')
@@ -26,7 +26,7 @@ export class LikeController {
 
   @UseGuards(CheckIsLoginUserGuard)
   @Post()
-  @LikeResponse()
+  @LikeResponseLike()
   like(@Body() body: LikePostDto, @Res() res: Response, @Req() req: Request) {
     const accessToken = req.cookies['accessToken']
     this.postCommentClient.send('like', { ...body, accessToken }).subscribe(

@@ -1,13 +1,13 @@
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Post, Req, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common'
 import { ClientKafka } from '@nestjs/microservices'
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
-import { AdminDeletePostResponse, DeletePostResponse } from 'src/decorators/post.decorator'
+import { AdminDeletePostResponseLike, DeletePostResponseLike } from 'src/decorators/post.decorator'
 import { CreatePostDto, DeletePostDto, GetPostsDto } from 'src/dto/post.dto'
-import { ReturnedCreatePost, ReturnedDeleteAdminPost, ReturnedDeletePost, ReturnedGetAllPosts } from 'src/dto/returnDto/r_post.dto'
+
 import { AdminGuard } from 'src/guards/admin.guard'
 import { CheckIsLoginUserGuard } from 'src/guards/logout.guard'
-import { CreatePostResponse, AllPostResponse } from '../decorators/post.decorator'
+import { CreatePostResponseLike, AllPostResponseLike } from '../decorators/post.decorator'
 
 @ApiTags('POSTS')
 @Controller('post')
@@ -25,7 +25,7 @@ export class PostController {
   }
 
   @Get('all')
-  @AllPostResponse()
+  @AllPostResponseLike()
   allPosts(@Body() body: GetPostsDto, @Res() res: Response) {
     this.postCommentClient.send('allPost', body).subscribe(
       (result) => {
@@ -39,7 +39,7 @@ export class PostController {
 
   @UseGuards(CheckIsLoginUserGuard)
   @Post('createPost')
-  @CreatePostResponse()
+  @CreatePostResponseLike()
   createPost(@Body() body: CreatePostDto, @Res() res: Response, @Req() req: Request) {
     const accessToken = req.cookies['accessToken']
     this.postCommentClient.send('createPost', { ...body, accessToken }).subscribe((result) => {
@@ -49,7 +49,7 @@ export class PostController {
 
   @UseGuards(CheckIsLoginUserGuard)
   @Delete('deletePost')
-  @DeletePostResponse()
+  @DeletePostResponseLike()
   async deleteMyPost(@Body() body: DeletePostDto, @Res() res: Response, @Req() req: Request) {
     const accessToken = req.cookies['accessToken']
     this.postCommentClient.send('deleteMyPost', { ...body, accessToken }).subscribe((result) => {
@@ -59,7 +59,7 @@ export class PostController {
 
   @UseGuards(AdminGuard)
   @Delete('deletePostAdmin')
-  @AdminDeletePostResponse()
+  @AdminDeletePostResponseLike()
   async deletePostAdmin(@Body() body: DeletePostDto, @Res() res: Response, @Req() req: Request) {
     const accessToken = req.cookies['accessToken']
     this.postCommentClient.send('deletePostAdmin', { ...body, accessToken }).subscribe((result) => {
