@@ -7,11 +7,6 @@ export const kafkaConfig: KafkaOptions = {
     client: {
       clientId: 'gateway',
       brokers: ['localhost:9092'],
-      retry: {
-        multiplier: 2,
-        initialRetryTime: 100,
-        retries: 5,
-      },
     },
     consumer: {
       groupId: 'gateway-consumer' + randomBytes(16).toString('hex'),
@@ -21,11 +16,6 @@ export const kafkaConfig: KafkaOptions = {
       allowAutoTopicCreation: true,
       idempotent: true,
       maxInFlightRequests: 1,
-      retry: {
-        multiplier: 2,
-        initialRetryTime: 100,
-        retries: 5,
-      },
     },
     send: {
       acks: -1,

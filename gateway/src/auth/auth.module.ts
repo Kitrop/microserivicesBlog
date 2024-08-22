@@ -16,11 +16,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices'
           client: {
             clientId: 'gateway',
             brokers: ['localhost:9092'],
-            retry: {
-              multiplier: 2,
-              initialRetryTime: 100,
-              retries: 5,
-            },
           },
           consumer: {
             groupId: 'gateway-consumer',
@@ -33,11 +28,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices'
             allowAutoTopicCreation: true,
             idempotent: true,
             maxInFlightRequests: 1,
-            retry: {
-              // multiplier: 2,
-              // initialRetryTime: 100,
-              retries: 1,
-            },
           },
         },
       },

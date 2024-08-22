@@ -6,11 +6,18 @@ import { AppController } from './app.controller'
 import { JwtStrategy } from './jwt.strategy'
 import { AuthModule } from './auth/auth.module'
 import { CommentModule } from './comment/comment.module'
-import { LikeModule } from './like/like.module'
+// import { LikeModule } from './like/like.module'
 import { PostModule } from './post/post.module'
+import { ThrottlerModule } from '@nestjs/throttler'
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 30000,
+        limit: 100,
+      },
+    ]),
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
@@ -24,7 +31,7 @@ import { PostModule } from './post/post.module'
     AuthModule,
     PostModule,
     CommentModule,
-    LikeModule,
+    // LikeModule,
   ],
   controllers: [AppController],
   providers: [JwtStrategy],

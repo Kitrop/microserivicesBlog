@@ -35,10 +35,10 @@ export class AuthController {
         res.cookie('accessToken', response.data.accessToken, {
           httpOnly: true,
         })
+
+        res.send(response)
       }
     })
-
-    return result
   }
 
   @UseGuards(CheckIsLogoutUserGuard)
