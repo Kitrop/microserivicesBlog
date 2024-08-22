@@ -278,7 +278,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
     return comment ? true : false
   }
-  
+
   // Найти автора комментария по commentId
   async findAuthorIdComment(commentId: number) {
     const findComment = await this.comments.findUnique({

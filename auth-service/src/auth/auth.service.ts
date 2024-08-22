@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException
-} from '@nestjs/common'
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { compare, genSalt, hash } from 'bcrypt'
 import { LoginDto, UserCreateDto } from 'src/dto/user.dto'
