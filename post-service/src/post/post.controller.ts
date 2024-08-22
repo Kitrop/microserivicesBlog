@@ -1,11 +1,15 @@
-import { Controller } from '@nestjs/common'
+import { Controller, Inject } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
 import { CreatePostDto, DeletePostDto, GetPostsDto } from 'src/dto/post.dto'
 import { PostService } from './post.service'
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager'
 
 @Controller()
 export class PostController {
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   @MessagePattern('createPost')
   async createPost(@Payload() createPost: CreatePostDto) {
@@ -14,7 +18,19 @@ export class PostController {
 
   @MessagePattern('allPost')
   async allPost(@Payload() allPost: GetPostsDto) {
-    return this.postService.getPosts(allPost)
+    const key = 'allPost'
+    const value = await this.cacheManager.get(key)
+
+    if (value) {
+      return value
+    }
+
+    const data = await this.postService.getPosts(allPost)
+    if (data.statisCode === 200) {
+      await this.cacheManager.set(key, data)
+    }
+
+    return data
   }
 
   @MessagePattern('deleteMyPost')

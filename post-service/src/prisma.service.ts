@@ -8,6 +8,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   logger = new Logger('Post_service')
+
   async createPost(userId: number, text: string) {
     const createdPost = await this.post
       .create({
@@ -59,7 +60,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async createLike(userId: number, postId: number) {
-    const like = await this.likes
+    await this.likes
       .create({
         data: {
           userId,
@@ -77,7 +78,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       },
     })
 
-    const commentsCount = await this.likes.count({
+    const commentsCount = await this.comments.count({
       where: {
         postId,
       },
@@ -90,6 +91,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
+  // Нахождение поста по id и просмотр лайков у пользователя по этому посту
   async findPostWithLike(userId: number, postId: number) {
     const findPostWithLike = await this.post
       .findUnique({
@@ -127,12 +129,14 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     return deleteLike
   }
 
+  // Показать кол-во лайков и комментов для поста
   async statisticPost(postId) {
     const likes = await this.likes.count({
       where: {
         postId,
       },
     })
+
     const comments = await this.comments
       .count({
         where: {
@@ -151,6 +155,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
   }
 
+  // Убрать лайк и выдать статистику по посту
   async deleteAndStatisticPost(likeId: number, postId: number) {
     await this.deleteLike(likeId)
     const statistic = await this.statisticPost(postId)
@@ -176,11 +181,16 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     return deletedComment
   }
 
-  async getAllPost() {
-    return await this.post.findMany().catch((e) => {
-      this.logger.error(e)
-      throw new InternalServerErrorException('failed to get all post')
-    })
+  async getAllPost(page: number, chunk: number) {
+    return await this.post
+      .findMany({
+        skip: (page - 1) * chunk,
+        take: chunk,
+      })
+      .catch((e) => {
+        this.logger.error(e)
+        throw new InternalServerErrorException('failed to get all post')
+      })
   }
 
   async getAllComments(postId: number) {
@@ -202,6 +212,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     return allComments
   }
 
+  // Существует ли пост?
   async findPost(id: number): Promise<boolean> {
     const findPost = this.post.findUnique({
       where: {
@@ -212,6 +223,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     return findPost ? true : false
   }
 
+  // Выдача автора поста по postId
   async findAuthorIdPost(postId: number) {
     const findPost = await this.post.findUnique({
       where: {
@@ -256,6 +268,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
   }
 
+  // Существует ли комментарий?
   async findComment(commentId: number) {
     const comment = this.comments.findUnique({
       where: {
@@ -265,7 +278,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
     return comment ? true : false
   }
-
+  
+  // Найти автора комментария по commentId
   async findAuthorIdComment(commentId: number) {
     const findComment = await this.comments.findUnique({
       where: {

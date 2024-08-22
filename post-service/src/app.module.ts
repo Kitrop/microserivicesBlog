@@ -1,25 +1,29 @@
 import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { PostModule } from './post/post.module'
-import { JwtModule, JwtService } from '@nestjs/jwt'
-import { CommentModule } from './comment/comment.module'
+import { JwtModule } from '@nestjs/jwt'
+import { CacheModule } from '@nestjs/cache-manager'
+import { redisStore } from 'cache-manager-redis-yet'
 import { LikeModule } from './like/like.module'
-import { PostController } from './post/post.controller'
-import { LikeController } from './like/like.controller'
-import { CommentController } from './comment/comment.controller'
-import { LikeService } from './like/like.service'
-import { CommentService } from './comment/comment.service'
-import { PostService } from './post/post.service'
-import { PrismaService } from './prisma.service'
+import { CommentModule } from './comment/comment.module'
 
 @Module({
   imports: [
     PostModule,
+    LikeModule,
+    CommentModule,
     JwtModule.register({
       secret: process.env.SECRET_KEY,
       signOptions: {
         expiresIn: '300h',
       },
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
+      ttl: 300,
     }),
   ],
   controllers: [AppController],

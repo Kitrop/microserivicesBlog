@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { Transport } from '@nestjs/microservices'
 import { KafkaExceptionFilter } from './kafkaExaption.filter'
+import { MessageDuplicateGuard } from './guard/duplicate.guard'
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
@@ -26,6 +27,7 @@ async function bootstrap() {
   })
 
   app.useGlobalFilters(new KafkaExceptionFilter())
+  app.useGlobalGuards(new MessageDuplicateGuard())
   await app.listen()
 }
 bootstrap()

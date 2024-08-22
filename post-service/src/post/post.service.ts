@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { DeleteCommentDto } from 'src/dto/comment.dto'
 import { CreatePostDto, DeletePostDto, GetPostsDto } from 'src/dto/post.dto'
@@ -21,10 +21,7 @@ export class PostService {
   }
 
   async getPosts(getPostsDto: GetPostsDto) {
-    const data = await this.prisma.post.findMany({
-      skip: (getPostsDto.page - 1) * getPostsDto.chunk,
-      take: getPostsDto.chunk,
-    })
+    const data = await this.prisma.getAllPost(getPostsDto.page, getPostsDto.chunk)
 
     return {
       statisCode: HttpStatus.OK,
@@ -70,7 +67,7 @@ export class PostService {
 
   async deleteMyPost(deletePost: DeletePostDto) {
     const dataJwt = this.jwtService.decode(deletePost.accessToken)
-    const userId = this.prisma.findAuthorIdPost(deletePost.postId)
+    const userId = await this.prisma.findAuthorIdPost(deletePost.postId)
 
     if (userId === dataJwt.id) {
       this.prisma.deletePost(deletePost.postId)

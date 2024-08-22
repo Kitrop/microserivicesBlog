@@ -17,9 +17,12 @@ export class LikeService {
       throw new NotFoundException('Post not found')
     }
 
+    // Поиск по лайкам пользователя по этому посту
     const findPostWithLike = await this.prisma.findPostWithLike(dataJwt.id, likePostDto.postId)
 
-    if (findPostWithLike) {
+    // Если лайк уже стоит
+    if (findPostWithLike.Likes.length !== 0) {
+      // Убрать лайк
       const staticst = await this.prisma.deleteAndStatisticPost(findPostWithLike.Likes[0].id, likePostDto.postId)
 
       return {
@@ -33,6 +36,7 @@ export class LikeService {
       }
     }
 
+    // Пользователь поставил лайк
     const newLike = await this.prisma.createLike(dataJwt.id, likePostDto.postId)
 
     return {
