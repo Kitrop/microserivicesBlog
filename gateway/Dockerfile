@@ -6,7 +6,7 @@ COPY package.json pnpm-lock.yaml ./
 
 RUN npm install -g pnpm
 
-RUN pnpm install -g pm2
+RUN pnpm install pm2
 
 RUN pnpm install
 
@@ -18,4 +18,4 @@ RUN pnpm build
 
 EXPOSE 3000
 
-CMD ["pm2", "dist/main.js", "--name", "gateway"]
+CMD ["pnpm", "pm2", "dist/main.js", "--name", "gateway"]
