@@ -18,7 +18,7 @@ import { randomBytes } from 'crypto';
         options: {
           client: {
             clientId: 'gateway',
-            brokers: ['localhost:9092'],
+            brokers: ['kafka:29092'],
           },
           consumer: {
             retry: {
