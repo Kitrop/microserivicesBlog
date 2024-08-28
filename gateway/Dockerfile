@@ -10,10 +10,12 @@ RUN pnpm install pm2
 
 RUN pnpm install
 
+RUN pnpm install express
+
 COPY . .
 
 RUN pnpm build
 
 EXPOSE 3000
 
-CMD ["pnpm", "pm2", "dist/main.js", "--name", "gateway"]
+CMD ["pnpm", "pm2" "start", "dist/main.js", "--name", "gateway"]
