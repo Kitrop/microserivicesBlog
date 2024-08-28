@@ -1,66 +1,66 @@
 /* eslint-disable indent */
-import { ApiResponseProperty } from '@nestjs/swagger'
+import { ApiResponseProperty } from '@nestjs/swagger';
 
 export class Post {
   @ApiResponseProperty()
-  id: number
+  id: number;
   @ApiResponseProperty()
-  userId: number
+  userId: number;
   @ApiResponseProperty()
-  message: string
+  message: string;
 }
 
 export class DataGetAllPosts {
   @ApiResponseProperty({ type: [Post] })
-  post: Post[]
+  post: Post[];
 
   @ApiResponseProperty()
-  page: number
+  page: number;
 
   @ApiResponseProperty()
-  chunk: number
+  chunk: number;
 }
 
 export class ReturnedGetAllPosts {
-  statusCode: number
+  statusCode: number;
   data: {
-    posts: Post[]
-    page: number
-    chunk: number
-  }
+    posts: Post[];
+    page: number;
+    chunk: number;
+  };
 }
 
 export class ReturnedCreatePost {
   @ApiResponseProperty()
-  statusCode: number
+  statusCode: number;
 
   @ApiResponseProperty({ type: Post })
-  data: Post
+  data: Post;
 }
 
 export class DataDeletePost {
   @ApiResponseProperty()
-  postId: number
+  postId: number;
 
   @ApiResponseProperty()
-  userId: number
+  userId: number;
 }
 
 export class ReturnedDeletePost {
   @ApiResponseProperty()
-  statusCode: number
+  statusCode: number;
   @ApiResponseProperty({ type: DataDeletePost })
-  data: DataDeletePost
+  data: DataDeletePost;
 }
 
 export class DataDeleteAdminPost {
   @ApiResponseProperty()
-  postId: number
+  postId: number;
 }
 
 export class ReturnedDeleteAdminPost {
   @ApiResponseProperty()
-  statusCode: number
+  statusCode: number;
   @ApiResponseProperty({ type: DataDeleteAdminPost })
-  data: DataDeleteAdminPost
+  data: DataDeleteAdminPost;
 }

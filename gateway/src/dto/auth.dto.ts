@@ -1,28 +1,28 @@
 /* eslint-disable indent */
-import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger'
-import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator'
+import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
+import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class SignInDto {
   @IsString()
   @ApiProperty()
-  username: string
+  username: string;
 
   @IsString()
   @ApiProperty()
-  password: string
+  password: string;
 }
 
 export class SignUpDto {
   @IsEmail()
   @IsString()
   @ApiProperty()
-  email: string
+  email: string;
 
   @IsString()
   @MinLength(3)
   @MaxLength(20)
   @ApiProperty()
-  username: string
+  username: string;
 
   @IsString()
   @MinLength(8, {
@@ -32,5 +32,5 @@ export class SignUpDto {
     message: 'password must contain uppercase, lowercase, number and special character',
   })
   @ApiProperty()
-  password: string
+  password: string;
 }

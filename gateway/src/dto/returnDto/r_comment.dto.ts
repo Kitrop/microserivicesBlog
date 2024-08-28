@@ -1,85 +1,85 @@
 /* eslint-disable indent */
-import { ApiResponseProperty } from '@nestjs/swagger'
+import { ApiResponseProperty } from '@nestjs/swagger';
 
 export class Comment {
   @ApiResponseProperty()
-  id: number
+  id: number;
   @ApiResponseProperty()
-  userId: number
+  userId: number;
   @ApiResponseProperty()
-  username: string
+  username: string;
   @ApiResponseProperty()
-  text: string
+  text: string;
   @ApiResponseProperty()
-  postId: number
+  postId: number;
 }
 
 export class ReturnedGetAllComments {
   @ApiResponseProperty()
-  statusCode: number
+  statusCode: number;
 
   @ApiResponseProperty({ type: [Comment] })
-  data: Comment[]
+  data: Comment[];
 }
 
 export class DataCreateComment {
   @ApiResponseProperty()
-  commentId: number
+  commentId: number;
 
   @ApiResponseProperty()
-  text: string
+  text: string;
 
   @ApiResponseProperty()
-  likes: number
+  likes: number;
 
   @ApiResponseProperty()
-  comments: number
+  comments: number;
 }
 
 export class ReturnedCreateComment {
   @ApiResponseProperty()
-  statusCode: number
+  statusCode: number;
 
   @ApiResponseProperty({ type: DataCreateComment })
   data: {
-    commentId: number
-    text: string
-    likes: number
-    comments: number
-  }
+    commentId: number;
+    text: string;
+    likes: number;
+    comments: number;
+  };
 }
 
 export class DataDelete {
   @ApiResponseProperty()
-  commentId: number
+  commentId: number;
 
   @ApiResponseProperty()
-  userId: number
+  userId: number;
 }
 
 export class ReturnedDeleteComment {
   @ApiResponseProperty()
-  statusCode: number
+  statusCode: number;
 
   @ApiResponseProperty({ type: DataDelete })
   data: {
-    commentId: number
-    userId: number
-  }
+    commentId: number;
+    userId: number;
+  };
 }
 
 export class DataDeleteAdmin {
   @ApiResponseProperty()
-  commentId: number
+  commentId: number;
 }
 
 export class ReturnedDeleteAdminComment {
   @ApiResponseProperty()
-  statusCode: number
+  statusCode: number;
   @ApiResponseProperty({
     type: DataDeleteAdmin,
   })
   data: {
-    commentId: number
-  }
+    commentId: number;
+  };
 }

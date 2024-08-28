@@ -1,13 +1,13 @@
-import { HttpException, Injectable, InternalServerErrorException, Logger, NotFoundException, OnModuleInit } from '@nestjs/common'
-import { PrismaClient } from '@prisma/client'
+import { HttpException, Injectable, InternalServerErrorException, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
-    await this.$connect()
+    await this.$connect();
   }
 
-  logger = new Logger('Post_service')
+  logger = new Logger('Post_service');
 
   async createPost(userId: number, text: string) {
     const createdPost = await this.post
@@ -18,10 +18,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException('failed to create a post')
-      })
-    return createdPost
+        this.logger.error(e);
+        throw new InternalServerErrorException('failed to create a post');
+      });
+    return createdPost;
   }
 
   async createComment(userId: number, username: string, postId: number, text: string) {
@@ -35,28 +35,28 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to create a comment to post with id ${postId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to create a comment to post with id ${postId}`);
+      });
 
     const likeCount = await this.likes.count({
       where: {
         postId,
       },
-    })
+    });
 
     const commentsCount = await this.likes.count({
       where: {
         postId,
       },
-    })
+    });
 
     return {
       commentId: createdComment.id,
       text: createdComment.text,
       commentsCount,
       likeCount,
-    }
+    };
   }
 
   async createLike(userId: number, postId: number) {
@@ -68,27 +68,27 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to like post with id ${postId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to like post with id ${postId}`);
+      });
 
     const likeCount = await this.likes.count({
       where: {
         postId,
       },
-    })
+    });
 
     const commentsCount = await this.comments.count({
       where: {
         postId,
       },
-    })
+    });
 
     return {
       postId,
       likeCount,
       commentsCount,
-    }
+    };
   }
 
   // Нахождение поста по id и просмотр лайков у пользователя по этому посту
@@ -107,11 +107,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to dislike post with id ${postId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to dislike post with id ${postId}`);
+      });
 
-    return findPostWithLike
+    return findPostWithLike;
   }
 
   async deleteLike(likeId: number) {
@@ -122,11 +122,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException('failed to dislike post')
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException('failed to dislike post');
+      });
 
-    return deleteLike
+    return deleteLike;
   }
 
   // Показать кол-во лайков и комментов для поста
@@ -135,7 +135,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         postId,
       },
-    })
+    });
 
     const comments = await this.comments
       .count({
@@ -145,25 +145,25 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       })
 
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to dislike post with id ${postId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to dislike post with id ${postId}`);
+      });
 
     return {
       comments,
       likes,
-    }
+    };
   }
 
   // Убрать лайк и выдать статистику по посту
   async deleteAndStatisticPost(likeId: number, postId: number) {
-    await this.deleteLike(likeId)
-    const statistic = await this.statisticPost(postId)
+    await this.deleteLike(likeId);
+    const statistic = await this.statisticPost(postId);
 
     return {
       likeCount: statistic.likes,
       commentCount: statistic.comments,
-    }
+    };
   }
 
   async deleteCommentAdmin(commentId: number) {
@@ -174,11 +174,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to delete comment with id ${commentId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to delete comment with id ${commentId}`);
+      });
 
-    return deletedComment
+    return deletedComment;
   }
 
   async getAllPost(page: number, chunk: number) {
@@ -188,14 +188,14 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         take: chunk,
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException('failed to get all post')
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException('failed to get all post');
+      });
   }
 
   async getAllComments(postId: number) {
     if (!this.findPost(postId)) {
-      throw new NotFoundException('post not found')
+      throw new NotFoundException('post not found');
     }
 
     const allComments = await this.comments
@@ -205,11 +205,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to get all comments from post with id ${postId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to get all comments from post with id ${postId}`);
+      });
 
-    return allComments
+    return allComments;
   }
 
   // Существует ли пост?
@@ -218,9 +218,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         id,
       },
-    })
+    });
 
-    return findPost ? true : false
+    return findPost ? true : false;
   }
 
   // Выдача автора поста по postId
@@ -229,20 +229,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         id: postId,
       },
-    })
+    });
 
     if (!findPost) {
-      throw new NotFoundException('post not found')
+      throw new NotFoundException('post not found');
     }
 
-    return findPost.userId
+    return findPost.userId;
   }
 
   async deletePost(postId: number) {
-    const isFindPost = this.findPost(postId)
+    const isFindPost = this.findPost(postId);
 
     if (!isFindPost) {
-      throw new NotFoundException('post with this id not found')
+      throw new NotFoundException('post with this id not found');
     }
 
     this.post
@@ -252,9 +252,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to delete post with id ${postId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to delete post with id ${postId}`);
+      });
 
     this.comments
       .deleteMany({
@@ -263,9 +263,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to delete all comments from post with id ${postId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to delete all comments from post with id ${postId}`);
+      });
   }
 
   // Существует ли комментарий?
@@ -274,9 +274,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         id: commentId,
       },
-    })
+    });
 
-    return comment ? true : false
+    return comment ? true : false;
   }
 
   // Найти автора комментария по commentId
@@ -285,20 +285,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       where: {
         id: commentId,
       },
-    })
+    });
 
     if (!findComment) {
-      throw new NotFoundException('post not found')
+      throw new NotFoundException('post not found');
     }
 
-    return findComment.userId
+    return findComment.userId;
   }
 
   async deleteComment(commentId: number) {
-    const isFindComment = this.findComment(commentId)
+    const isFindComment = this.findComment(commentId);
 
     if (!isFindComment) {
-      throw new NotFoundException('Comment with this id not found')
+      throw new NotFoundException('Comment with this id not found');
     }
 
     this.comments
@@ -308,8 +308,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         },
       })
       .catch((e) => {
-        this.logger.error(e)
-        throw new InternalServerErrorException(`failed to delete comment with id ${commentId}`)
-      })
+        this.logger.error(e);
+        throw new InternalServerErrorException(`failed to delete comment with id ${commentId}`);
+      });
   }
 }

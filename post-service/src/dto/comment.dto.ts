@@ -1,32 +1,32 @@
 /* eslint-disable indent */
-import { IsJWT, IsNumber, IsPositive, IsString, Max, Min } from 'class-validator'
+import { IsJWT, IsNumber, IsPositive, IsString, Max, Min } from 'class-validator';
 
 export class GetAllCommentsDto {
   @IsNumber()
   @IsPositive()
-  postId: number
+  postId: number;
 }
 
 export class CreateCommentDto {
   @IsNumber()
-  postId: number
+  postId: number;
 
   @IsString()
   @IsJWT()
-  accessToken: string
+  accessToken: string;
 
   @IsString()
   @Min(1)
   @Max(100)
-  text: string
+  text: string;
 }
 
 export class DeleteCommentDto {
   @IsString()
   @IsJWT()
-  accessToken: string
+  accessToken: string;
 
   @IsNumber()
   @IsPositive()
-  commentId: number
+  commentId: number;
 }

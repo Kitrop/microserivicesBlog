@@ -1,7 +1,7 @@
-import { Injectable, CanActivate, ExecutionContext, BadRequestException, UnauthorizedException } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { JwtService } from '@nestjs/jwt'
-import { Observable } from 'rxjs'
+import { Injectable, CanActivate, ExecutionContext, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -11,11 +11,11 @@ export class AdminGuard implements CanActivate {
     private readonly configService: ConfigService,
   ) {}
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest()
-    const accessToken = request.cookies['accessToken']
+    const request = context.switchToHttp().getRequest();
+    const accessToken = request.cookies['accessToken'];
 
     if (!accessToken) {
-      throw new UnauthorizedException('User is not logged in')
+      throw new UnauthorizedException('User is not logged in');
     }
 
     const isValidToken = this.jwtService
@@ -24,20 +24,20 @@ export class AdminGuard implements CanActivate {
         secret: this.configService.get('SECRET_KEY'),
       })
       .catch((err) => {
-        console.log(err)
-        throw new BadRequestException('Invalid token')
-      })
+        console.log(err);
+        throw new BadRequestException('Invalid token');
+      });
 
     if (!isValidToken) {
-      throw new BadRequestException('Invalid token')
+      throw new BadRequestException('Invalid token');
     }
 
-    const dataJwt = this.jwtService.decode(accessToken)
+    const dataJwt = this.jwtService.decode(accessToken);
 
     if (dataJwt.role === 'ADMIN') {
-      return true
+      return true;
     } else {
-      throw new BadRequestException('User is not admin')
+      throw new BadRequestException('User is not admin');
     }
   }
 }

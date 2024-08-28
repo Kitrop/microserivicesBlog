@@ -1,5 +1,5 @@
-import { Transport, KafkaOptions } from '@nestjs/microservices'
-import { randomBytes } from 'crypto'
+import { Transport, KafkaOptions } from '@nestjs/microservices';
+import { randomBytes } from 'crypto';
 
 export const kafkaConfig: KafkaOptions = {
   transport: Transport.KAFKA,
@@ -21,7 +21,7 @@ export const kafkaConfig: KafkaOptions = {
       acks: -1,
     },
   },
-}
+};
 
 export const jwtModuleConfig = (secret: string) => {
   return {
@@ -29,5 +29,5 @@ export const jwtModuleConfig = (secret: string) => {
     signOptions: {
       expiresIn: '300h',
     },
-  }
-}
+  };
+};

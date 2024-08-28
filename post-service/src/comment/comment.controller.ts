@@ -1,9 +1,9 @@
-import { Controller, Inject } from '@nestjs/common'
-import { MessagePattern, Payload } from '@nestjs/microservices'
-import { CreateCommentDto, DeleteCommentDto, GetAllCommentsDto } from 'src/dto/comment.dto'
-import { CommentService } from './comment.service'
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager'
-import { LikePostDto } from 'src/dto/like.dto'
+import { Controller, Inject } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { CreateCommentDto, DeleteCommentDto, GetAllCommentsDto } from 'src/dto/comment.dto';
+import { CommentService } from './comment.service';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { LikePostDto } from 'src/dto/like.dto';
 
 @Controller()
 export class CommentController {
@@ -14,34 +14,34 @@ export class CommentController {
 
   @MessagePattern('createComment')
   async createComment(@Payload() createComment: CreateCommentDto) {
-    console.log('comment')
-    return this.commentService.createComment(createComment)
+    console.log('comment');
+    return this.commentService.createComment(createComment);
   }
 
   @MessagePattern('getAllComments')
   async getAllComments(@Payload() getAllComments: GetAllCommentsDto) {
-    const key = `getAllComments_${getAllComments.postId}`
-    const value = await this.cacheManager.get(key)
+    const key = `getAllComments_${getAllComments.postId}`;
+    const value = await this.cacheManager.get(key);
     if (value) {
-      return value
+      return value;
     }
 
-    const data = await this.commentService.getAllComments(getAllComments)
+    const data = await this.commentService.getAllComments(getAllComments);
 
     if (data.statusCode === 200) {
-      await this.cacheManager.set(key, data)
+      await this.cacheManager.set(key, data);
     }
 
-    return data
+    return data;
   }
 
   @MessagePattern('deleteMyComment')
   async deleteMyComment(@Payload() deletePost: DeleteCommentDto) {
-    return this.commentService.deleteMyComment(deletePost)
+    return this.commentService.deleteMyComment(deletePost);
   }
 
   @MessagePattern('deleteCommentAdmin')
   async deleteCommentAdmin(@Payload() deletePost: DeleteCommentDto) {
-    return this.commentService.deleteCommentAdmin(deletePost)
+    return this.commentService.deleteCommentAdmin(deletePost);
   }
 }

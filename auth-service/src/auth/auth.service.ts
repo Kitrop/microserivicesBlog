@@ -1,8 +1,8 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { compare, genSalt, hash } from 'bcrypt'
-import { LoginDto, UserCreateDto } from 'src/dto/user.dto'
-import { PrismaService } from 'src/prisma.service'
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { compare, genSalt, hash } from 'bcrypt';
+import { LoginDto, UserCreateDto } from 'src/dto/user.dto';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -16,23 +16,23 @@ export class AuthService {
       where: {
         username: createDto.username
       }
-    })
+    });
 
     const findUserByEmail = await this.prisma.user.findUnique({
       where: {
         email: createDto.email
       }
-    })
+    });
 
     if (findUserByUsername) {
-      return new BadRequestException('user with this username already exist')
+      return new BadRequestException('user with this username already exist');
     }
     if (findUserByEmail) {
-      return new BadRequestException('user with this email already exist')
+      return new BadRequestException('user with this email already exist');
     }
 
-    const salt = await genSalt()
-    const passwordHash = await hash(createDto.password, salt)
+    const salt = await genSalt();
+    const passwordHash = await hash(createDto.password, salt);
 
     const newUser = await this.prisma.user.create({
       data: {
@@ -41,14 +41,14 @@ export class AuthService {
         passwordHash,
         salt
       }
-    })
+    });
 
     const jwt = this.jwtService.sign({
       id: newUser.id,
       username: newUser.username,
       email: newUser.email,
       role: newUser.role
-    })
+    });
 
     return {
       statusCode: 201,
@@ -58,7 +58,7 @@ export class AuthService {
         email: newUser.email,
         accessToken: jwt
       }
-    }
+    };
   }
 
   async signIn(loginDto: LoginDto) {
@@ -66,20 +66,20 @@ export class AuthService {
       where: {
         username: loginDto.username
       }
-    })
+    });
 
     if (!findUser) {
-      return new NotFoundException('User not found')
+      return new NotFoundException('User not found');
     }
 
-    const comparePassword = compare(loginDto.password, findUser.passwordHash)
+    const comparePassword = compare(loginDto.password, findUser.passwordHash);
 
     const jwt = this.jwtService.sign({
       id: findUser.id,
       username: findUser.username,
       email: findUser.email,
       role: findUser.role
-    })
+    });
 
     if (comparePassword) {
       return {
@@ -90,9 +90,9 @@ export class AuthService {
           email: findUser.email,
           accessToken: jwt
         }
-      }
+      };
     } else {
-      return new BadRequestException('incorrect password')
+      return new BadRequestException('incorrect password');
     }
   }
 }

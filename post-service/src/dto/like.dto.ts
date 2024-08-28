@@ -1,11 +1,11 @@
 /* eslint-disable indent */
-import { IsJWT, IsNumber, IsString } from 'class-validator'
+import { IsJWT, IsNumber, IsString } from 'class-validator';
 
 export class LikePostDto {
   @IsNumber()
-  postId: number
+  postId: number;
 
   @IsString()
   @IsJWT()
-  accessToken: string
+  accessToken: string;
 }

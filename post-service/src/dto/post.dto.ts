@@ -1,31 +1,31 @@
-import { IsJWT, IsNumber, IsPositive, IsString, Max, Min } from 'class-validator'
+import { IsJWT, IsNumber, IsPositive, IsString, Max, Min } from 'class-validator';
 
 export class CreatePostDto {
   @IsString()
-    accessToken: string
+  accessToken: string;
 
   @IsString()
   @Min(4)
   @Max(350)
-    text: string
+  text: string;
 }
 
 export class DeletePostDto {
   @IsString()
   @IsJWT()
-    accessToken: string
+  accessToken: string;
 
   @IsNumber()
   @IsPositive()
-    postId: number
+  postId: number;
 }
 
 export class GetPostsDto {
   @IsNumber()
   @IsPositive()
-    page: number
+  page: number;
 
   @IsNumber()
   @IsPositive()
-    chunk: number
+  chunk: number;
 }

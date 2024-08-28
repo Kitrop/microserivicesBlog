@@ -1,7 +1,7 @@
-import { Injectable, CanActivate, ExecutionContext, BadRequestException } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { JwtService } from '@nestjs/jwt'
-import { Observable } from 'rxjs'
+import { Injectable, CanActivate, ExecutionContext, BadRequestException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class CheckIsLoginUserGuard implements CanActivate {
@@ -11,11 +11,11 @@ export class CheckIsLoginUserGuard implements CanActivate {
     private readonly configService: ConfigService,
   ) {}
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest()
-    const accessToken = request.cookies['accessToken']
+    const request = context.switchToHttp().getRequest();
+    const accessToken = request.cookies['accessToken'];
 
     if (!accessToken) {
-      throw new BadRequestException('User is not logged in')
+      throw new BadRequestException('User is not logged in');
     }
 
     const isValidToken = this.jwtService
@@ -24,10 +24,10 @@ export class CheckIsLoginUserGuard implements CanActivate {
         secret: this.configService.get('SECRET_KEY'),
       })
       .catch((err) => {
-        console.log(err)
-        throw new BadRequestException('Invalid token')
-      })
+        console.log(err);
+        throw new BadRequestException('Invalid token');
+      });
 
-    return isValidToken ? true : false
+    return isValidToken ? true : false;
   }
 }

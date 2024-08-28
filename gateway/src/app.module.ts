@@ -1,14 +1,14 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import { JwtModule } from '@nestjs/jwt'
-import { PassportModule } from '@nestjs/passport'
-import { AppController } from './app.controller'
-import { JwtStrategy } from './jwt.strategy'
-import { AuthModule } from './auth/auth.module'
-import { CommentModule } from './comment/comment.module'
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { AppController } from './app.controller';
+import { JwtStrategy } from './jwt.strategy';
+import { AuthModule } from './auth/auth.module';
+import { CommentModule } from './comment/comment.module';
 // import { LikeModule } from './like/like.module'
-import { PostModule } from './post/post.module'
-import { ThrottlerModule } from '@nestjs/throttler'
+import { PostModule } from './post/post.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [

@@ -1,8 +1,8 @@
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app.module'
-import { Transport } from '@nestjs/microservices'
-import { KafkaExceptionFilter } from './kafkaExaption.filter'
-import { MessageDuplicateGuard } from './guard/duplicate.guard'
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { Transport } from '@nestjs/microservices';
+import { KafkaExceptionFilter } from './kafkaExaption.filter';
+import { MessageDuplicateGuard } from './guard/duplicate.guard';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
@@ -12,6 +12,11 @@ async function bootstrap() {
         brokers: ['localhost:9092'],
       },
       consumer: {
+        retry: {
+          initialRetryTime: 150,
+          multiplier: 3,
+          retries: 10,
+        },
         groupId: 'post_service-consumer',
         allowAutoTopicCreation: true,
       },
@@ -19,15 +24,20 @@ async function bootstrap() {
         acks: -1,
       },
       producer: {
+        retry: {
+          initialRetryTime: 150,
+          multiplier: 3,
+          retries: 10,
+        },
         allowAutoTopicCreation: true,
         idempotent: true,
         maxInFlightRequests: 1,
       },
     },
-  })
+  });
 
-  app.useGlobalFilters(new KafkaExceptionFilter())
-  app.useGlobalGuards(new MessageDuplicateGuard())
-  await app.listen()
+  app.useGlobalFilters(new KafkaExceptionFilter());
+  app.useGlobalGuards(new MessageDuplicateGuard());
+  await app.listen();
 }
-bootstrap()
+bootstrap();

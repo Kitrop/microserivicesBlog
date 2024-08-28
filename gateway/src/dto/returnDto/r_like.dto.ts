@@ -1,16 +1,16 @@
 /* eslint-disable indent */
-import { ApiResponseProperty } from '@nestjs/swagger'
+import { ApiResponseProperty } from '@nestjs/swagger';
 
 export class ReturnedLikeDto {
   @ApiResponseProperty()
-  postId: number
+  postId: number;
 
   @ApiResponseProperty()
-  like: boolean
+  like: boolean;
 
   @ApiResponseProperty()
-  likes: number
+  likes: number;
 
   @ApiResponseProperty()
-  comments: number
+  comments: number;
 }

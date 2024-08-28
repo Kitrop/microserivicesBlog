@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common'
-import { CommentController } from './comment.controller'
-import { ClientsModule, Transport } from '@nestjs/microservices'
-import { jwtModuleConfig, kafkaConfig } from 'src/config'
-import { JwtModule } from '@nestjs/jwt'
-import { CheckIsLogoutUserGuard } from 'src/guards/login.guard'
-import { CheckIsLoginUserGuard } from 'src/guards/logout.guard'
-import { ConfigService } from '@nestjs/config'
-import { AdminGuard } from 'src/guards/admin.guard'
-import { randomBytes } from 'crypto'
+import { Module } from '@nestjs/common';
+import { CommentController } from './comment.controller';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { jwtModuleConfig, kafkaConfig } from 'src/config';
+import { JwtModule } from '@nestjs/jwt';
+import { CheckIsLogoutUserGuard } from 'src/guards/login.guard';
+import { CheckIsLoginUserGuard } from 'src/guards/logout.guard';
+import { ConfigService } from '@nestjs/config';
+import { AdminGuard } from 'src/guards/admin.guard';
+import { randomBytes } from 'crypto';
 
 @Module({
   imports: [
@@ -21,10 +21,20 @@ import { randomBytes } from 'crypto'
             brokers: ['localhost:9092'],
           },
           consumer: {
+            retry: {
+              initialRetryTime: 150,
+              multiplier: 3,
+              retries: 10,
+            },
             groupId: 'gateway-consumer' + randomBytes(16).toString('hex'),
             allowAutoTopicCreation: true,
           },
           producer: {
+            retry: {
+              initialRetryTime: 150,
+              multiplier: 3,
+              retries: 10,
+            },
             allowAutoTopicCreation: true,
             idempotent: true,
             maxInFlightRequests: 1,
