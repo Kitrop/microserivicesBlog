@@ -20,4 +20,4 @@ RUN pnpm prisma generate
 
 EXPOSE 3001
 
-CMD ["pnpm", "pm2", "dist/main.js", "--name", "post_service"]
+CMD ["pnpm", "start:prod"]
