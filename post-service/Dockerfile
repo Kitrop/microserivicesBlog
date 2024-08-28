@@ -10,11 +10,13 @@ RUN pnpm install pm2
 
 RUN pnpm install
 
+RUN pnpm install express
+
 COPY . .
 
-RUN pnpm prisma generate
-
 RUN pnpm build
+
+RUN pnpm prisma generate
 
 EXPOSE 3001
 

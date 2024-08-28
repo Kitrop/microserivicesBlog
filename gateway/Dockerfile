@@ -18,4 +18,4 @@ RUN pnpm build
 
 EXPOSE 3000
 
-CMD ["pnpm", "pm2" "start", "dist/main.js", "--name", "gateway"]
+CMD ["pnpm", "pm2", "start", "dist/main.js", "--name", "gateway"]
