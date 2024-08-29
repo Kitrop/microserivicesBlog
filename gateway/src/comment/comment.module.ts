@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CommentController } from './comment.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { jwtModuleConfig, kafkaConfig } from 'src/config';
+import { jwtModuleConfig } from 'src/config';
 import { JwtModule } from '@nestjs/jwt';
 import { CheckIsLogoutUserGuard } from 'src/guards/login.guard';
 import { CheckIsLoginUserGuard } from 'src/guards/logout.guard';

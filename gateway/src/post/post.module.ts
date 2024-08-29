@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { CheckIsLogoutUserGuard } from 'src/guards/login.guard';
-import { CheckIsLoginUserGuard } from 'src/guards/logout.guard';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { jwtModuleConfig, kafkaConfig } from 'src/config';
-import { AdminGuard } from '../guards/admin.guard';
-import { PostController } from 'src/post/post.controller';
-import { randomBytes } from 'crypto';
+import { Module } from '@nestjs/common'
+import { ClientsModule, Transport } from '@nestjs/microservices'
+import { CheckIsLogoutUserGuard } from 'src/guards/login.guard'
+import { CheckIsLoginUserGuard } from 'src/guards/logout.guard'
+import { JwtModule } from '@nestjs/jwt'
+import { ConfigService } from '@nestjs/config'
+import { jwtModuleConfig } from 'src/config'
+import { AdminGuard } from '../guards/admin.guard'
+import { PostController } from 'src/post/post.controller'
+import { randomBytes } from 'crypto'
 
 @Module({
   imports: [

@@ -6,7 +6,7 @@ export const kafkaConfig: KafkaOptions = {
   options: {
     client: {
       clientId: 'gateway',
-      brokers: ['localhost:9092'],
+      brokers: ['kafka:29092'],
     },
     consumer: {
       groupId: 'gateway-consumer' + randomBytes(16).toString('hex'),
